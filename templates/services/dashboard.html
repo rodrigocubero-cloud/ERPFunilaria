@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Dashboard (últimos 30 dias)</h1>
+  <p class="muted">
+    Período: {{ start_date|date:"d/m/Y" }} até {{ end_date|date:"d/m/Y" }}
+  </p>
+
+  <div class="card" style="margin-bottom: 16px;">
+    <form method="get" class="form-grid">
+      <div>
+        {{ form.start_date.label_tag }}
+        {{ form.start_date }}
+      </div>
+      <div>
+        {{ form.end_date.label_tag }}
+        {{ form.end_date }}
+      </div>
+      <div style="align-self: end;">
+        <button class="btn" type="submit">Filtrar</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="grid" style="margin-bottom: 24px;">
+    <div class="card">
+      <h3>Total de Faturamento</h3>
+      <p style="font-size: 1.6rem; font-weight: 700;">
+        R$ {{ total_revenue|floatformat:2 }}
+      </p>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Total de NF por CNPJ</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>CNPJ</th>
+            <th>Total NF</th>
+            <th>Faturamento</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in nf_by_cnpj %}
+            <tr>
+              <td>{{ row.customer__name }}</td>
+              <td>{{ row.customer__document }}</td>
+              <td>{{ row.total_invoices }}</td>
+              <td>R$ {{ row.total_value|floatformat:2 }}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="4" class="muted">Nenhuma NF no período.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Rank de Funcionário</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Funcionário</th>
+            <th>OS</th>
+            <th>Faturamento</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in employee_rank %}
+            <tr>
+              <td>{{ row.employee__name }}</td>
+              <td>{{ row.total_orders }}</td>
+              <td>R$ {{ row.total_value|floatformat:2 }}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="3" class="muted">Nenhum funcionário com OS no período.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
